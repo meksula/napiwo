@@ -22,4 +22,10 @@ public class HomeController {
         return "index";
     }
 
+    @GetMapping("/dashboard")
+    @ResponseStatus(HttpStatus.OK)
+    public String dashboard() {
+        return "dashboard";
+    }
+
 }
