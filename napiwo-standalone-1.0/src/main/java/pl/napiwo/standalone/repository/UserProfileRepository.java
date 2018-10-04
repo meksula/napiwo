@@ -15,4 +15,6 @@ import java.util.Optional;
 @Repository
 public interface UserProfileRepository extends JpaRepository<UserProfile, Long> {
     Optional<UserProfile> findBySocialServiceId(String socialServiceId);
+
+    Optional<UserProfile> findBySocialServiceIdAndAndSocialUserName(String socialServiceId, String socialUsername);
 }

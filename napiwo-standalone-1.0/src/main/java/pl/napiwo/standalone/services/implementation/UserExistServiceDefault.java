@@ -18,6 +18,7 @@ import java.util.Map;
 public class UserExistServiceDefault implements UserExistService {
     private UserProfileRepository userProfileRepository;
     private final String EXCEPTION_MESSAGE = "Something went wrong. Cannot fetch UserProfile.class entity.";
+    private final String INVALID_JSON = "oAuth 2.0 provider did not send us correct object.";
 
     public UserExistServiceDefault(UserProfileRepository userProfileRepository) {
         this.userProfileRepository = userProfileRepository;
@@ -26,10 +27,19 @@ public class UserExistServiceDefault implements UserExistService {
     @Override
     public boolean isUserExist(OAuth2Authentication auth2Authentication) {
         if (auth2Authentication == null) {
-            throw new IllegalArgumentException("oAuth 2.0 provider did not send us correct object.");
+            throw new IllegalArgumentException(INVALID_JSON);
         }
 
         return userProfileRepository.findBySocialServiceId(assignSocialServiceId(auth2Authentication)).isPresent();
+    }
+
+    @Override
+    public boolean isUserExist(String socialServiceId, String socialUserName) {
+        if(socialUserName == null) {
+            throw new IllegalArgumentException(INVALID_JSON);
+        }
+
+        return userProfileRepository.findBySocialServiceIdAndAndSocialUserName(socialServiceId, socialUserName).isPresent();
     }
 
     @Override

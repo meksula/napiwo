@@ -12,5 +12,7 @@ import pl.napiwo.standalone.dto.UserProfile;
 public interface UserExistService {
     boolean isUserExist(OAuth2Authentication auth2Authentication);
 
+    boolean isUserExist(String socialServiceId, String socialUserName);
+
     UserProfile fetchUserProfile(OAuth2Authentication auth2Authentication);
 }

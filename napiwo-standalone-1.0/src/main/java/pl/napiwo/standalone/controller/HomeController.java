@@ -1,5 +1,6 @@
 package pl.napiwo.standalone.controller;
 
+import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.stereotype.Controller;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import pl.napiwo.standalone.services.UserExistService;
 
+import java.io.IOException;
 import java.security.Principal;
 
 /**
@@ -34,7 +36,7 @@ public class HomeController {
 
     @GetMapping("/dashboard")
     @ResponseStatus(HttpStatus.OK)
-    public String dashboard(Principal principal, Model model) {
+    public String dashboard(Principal principal, Model model) throws IOException {
         OAuth2Authentication authentication = (OAuth2Authentication) principal;
         boolean isUserExist = userExistService.isUserExist(authentication);
 
