@@ -1,7 +1,7 @@
 package pl.napiwo.doorman.services;
 
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
-import pl.napiwo.standalone.dto.UserProfile;
+import pl.napiwo.doorman.dto.UserProfile;
 
 /**
  * @author

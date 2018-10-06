@@ -1,8 +1,8 @@
-package pl.napiwo.doorman.repository;
+package pl.napiwo.cerberdb.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import pl.napiwo.standalone.dto.UserProfile;
+import pl.napiwo.cerberdb.dto.UserProfile;
 
 import java.util.Optional;
 

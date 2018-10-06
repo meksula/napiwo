@@ -2,9 +2,9 @@ package pl.napiwo.doorman.services.implementation;
 
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.stereotype.Service;
-import pl.napiwo.standalone.dto.UserProfile;
-import pl.napiwo.standalone.repository.UserProfileRepository;
-import pl.napiwo.standalone.services.UserExistService;
+import pl.napiwo.doorman.dto.UserProfile;
+import pl.napiwo.doorman.repository.UserProfileRepository;
+import pl.napiwo.doorman.services.UserExistService;
 
 import java.util.Map;
 

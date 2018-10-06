@@ -26,7 +26,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/napiwo/login/credentials").permitAll()
+                .antMatchers("/", "/napiwo/login").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
