@@ -1,10 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Login</title>
 </head>
 <body>
     <h1>Logowanie do serwisu</h1>
+    <br>
+    <form action="#" th:action="@{/scribe/login/request}" th:object="${loginObject}" method="post">
+        <p>Nazwa użytkownika:</p>
+        <input type="text" th:field="${loginObject.username}" />
+        <br>
+        <p>Hasło:</p>
+        <input type="password" th:field="${loginObject.decryptedPassword}" />
+        <br>
+        <button type="submit">Loguj</button>
+    </form>
 </body>
 </html>

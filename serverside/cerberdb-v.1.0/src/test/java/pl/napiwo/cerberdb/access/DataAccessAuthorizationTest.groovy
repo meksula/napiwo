@@ -1,5 +1,6 @@
 package pl.napiwo.cerberdb.access
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
@@ -45,7 +46,7 @@ class DataAccessAuthorizationTest extends Specification {
         validAccessKey.setDecryptedAccessToken(DECRYPTED_PASSWORD_VALID)
     }
 
-    def "method should return true : authorization valid"() {
+    def "isAuthorized() method should return true : authorization valid"() {
         setup:
         def userAccessEntity = new UserAccessEntity()
         userAccessEntity.setUserProfileId(VALID_USER_ID)
@@ -56,7 +57,7 @@ class DataAccessAuthorizationTest extends Specification {
         dataAccessAuthorization.isAuthorized(validAccessKey)
     }
 
-    def "method should return false : authorization invalid"() {
+    def "isAuthorized() method should return false : authorization invalid"() {
         setup:
         def userAccessEntity = new UserAccessEntity()
         userAccessEntity.setUserProfileId(VALID_USER_ID)
@@ -68,12 +69,64 @@ class DataAccessAuthorizationTest extends Specification {
         !dataAccessAuthorization.isAuthorized(validAccessKey)
     }
 
-    def "method should throw exception : no such user in database"() {
+    def "isAuthorized() method should throw exception : no such user in database"() {
         when:
         dataAccessAuthorization.isAuthorized(invalidAccessKey)
 
         then:
         thrown(CerberdbDataNotFound)
+    }
+
+    def "encryptAndSave(..) should create NEW entity : variant for new users"() {
+        when:
+        def savedEntity = dataAccessAuthorization.encryptAndSave(validAccessKey)
+        def userProfileId = savedEntity.userProfileId
+
+        then:
+        def userAccessEntity = userAccessEntityRepository.findByUserProfileId(userProfileId).get()
+        userAccessEntity != null
+        dataAccessAuthorization.isAuthorized(validAccessKey)
+    }
+
+    def "encryptAndSave(..) should UPDATE existed entity : variant for exist users"() {
+        setup: "entity just exist"
+        def freshTokenSendingByScribe = "209dm2md29x02cl043=-2=d2md29"
+        def savedEntity = dataAccessAuthorization.encryptAndSave(validAccessKey)
+        def userProfileId = savedEntity.getUserProfileId()
+        //overwrite token with new fresh value from Scribe
+        validAccessKey.setDecryptedAccessToken(freshTokenSendingByScribe)
+
+        when:
+        dataAccessAuthorization.encryptAndSave(validAccessKey)
+
+        then:
+        def userAccessEntityUpdated = userAccessEntityRepository.findByUserProfileId(userProfileId).get()
+        userAccessEntityUpdated != null
+        userAccessEntityUpdated.getLastGeneratedTokenDate() != null
+        println("GENERATED DATE: " + userAccessEntityUpdated.getLastGeneratedTokenDate())
+        dataAccessAuthorization.isAuthorized(validAccessKey)
+    }
+
+    def "encryptAndSave(..) try to use outdated token to authentication"() {
+        setup: "entity just exist"
+        def freshTokenSendingByScribe = "209dm2md29x02cl043=-2=d2md29"
+        def savedEntity = dataAccessAuthorization.encryptAndSave(validAccessKey)
+        def expiredAccessKey = validAccessKey
+        def userProfileId = savedEntity.getUserProfileId()
+        //overwrite token with new fresh value from Scribe
+        validAccessKey.setDecryptedAccessToken(freshTokenSendingByScribe)
+
+        when:
+        dataAccessAuthorization.encryptAndSave(validAccessKey)
+
+        then:
+        def userAccessEntityUpdated = userAccessEntityRepository.findByUserProfileId(userProfileId).get()
+        userAccessEntityUpdated != null
+        //authorization with outdated, expired key should be failed with false param
+        print(userAccessEntityRepository.count())
+
+        expiredAccessKey.setDecryptedAccessToken(DECRYPTED_PASSWORD_VALID)
+        !dataAccessAuthorization.isAuthorized(expiredAccessKey)
     }
 
     void cleanup() {

@@ -12,9 +12,9 @@ import org.springframework.session.jdbc.config.annotation.web.http.EnableJdbcHtt
 
 @SpringBootApplication
 @EnableJdbcHttpSession
-public class NapiwoStandaloneApplication {
+public class DoormanApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(NapiwoStandaloneApplication.class, args);
+        SpringApplication.run(DoormanApplication.class, args);
     }
 }

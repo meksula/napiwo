@@ -1,13 +1,12 @@
 package pl.napiwo.doorman.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import pl.napiwo.doorman.services.UserExistService;
 
 import java.security.Principal;
 
@@ -19,12 +18,8 @@ import java.security.Principal;
 
 @Controller
 @RequestMapping("/napiwo/login")
+@Slf4j
 public class LoginController {
-    private UserExistService userExistService;
-
-    public LoginController(UserExistService userExistService) {
-        this.userExistService = userExistService;
-    }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
@@ -34,22 +29,14 @@ public class LoginController {
 
     @GetMapping("/facebook")
     @ResponseStatus(HttpStatus.OK)
-    public String loginByFacebook(Principal principal, Model model) {
+    public String loginByFacebook(Principal principal) {
         OAuth2Authentication authentication = (OAuth2Authentication) principal;
-        boolean isUserExist = userExistService.isUserExist(authentication);
 
-        if (!isUserExist) {
-            return "user_not_exist_page";
+        if (authentication.isAuthenticated()) {
+            return "redirect:http://localhost:8050";
         }
 
-        model.addAttribute("userProfile", userExistService.fetchUserProfile(authentication));
-        return "dashboard";
-    }
-
-    @GetMapping("/credentials")
-    @ResponseStatus(HttpStatus.OK)
-    public String loginByTypeCredentials() {
-        return "dashboard";
+        return "user_not_exist_page";
     }
 
 }

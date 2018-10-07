@@ -1,5 +1,6 @@
 package pl.napiwo.cerberdb.access;
 
+import pl.napiwo.cerberdb.dto.UserAccessEntity;
 import pl.napiwo.cerberdb.dto.UserAccessKey;
 
 /**
@@ -10,4 +11,6 @@ import pl.napiwo.cerberdb.dto.UserAccessKey;
 
 public interface DataAccess {
     boolean isAuthorized(UserAccessKey userAccessKey);
+
+    UserAccessEntity encryptAndSave(UserAccessKey userAccessKey);
 }
